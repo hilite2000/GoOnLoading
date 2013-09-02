@@ -25,6 +25,8 @@ namespace GoOnLoading
 
         private bool mIsRunning;
 
+        private string mWebMethod = "GET";
+
         /// <summary>
         /// 在运行中
         /// </summary>
@@ -52,6 +54,7 @@ namespace GoOnLoading
 
             this.mSyncContext = System.Threading.SynchronizationContext.Current;
 
+            this.cbMethod.SelectedIndex = 0;
             this.IsRunning = false;
             this.mOkCount = this.mFailCount = 0;
             RefreshUI();
@@ -70,6 +73,7 @@ namespace GoOnLoading
                 cbUrl.Text = this.mTargetUri.AbsoluteUri;
 
                 List<string> urlList = new List<string>();
+                urlList.Add(cbUrl.Text);
                 foreach (string item in cbUrl.Items) urlList.Add(item);
                 cbUrl.Items.Clear();
                 cbUrl.Items.AddRange(urlList.Distinct().ToArray());
@@ -109,6 +113,9 @@ namespace GoOnLoading
             RefreshUI();
         }
 
+        /*********************************************************************************
+                                        访问Web的核心代码
+        *********************************************************************************/
         private void VisitURL()
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -120,21 +127,21 @@ namespace GoOnLoading
                 string msg = "";
                 Color msgColor = Color.Black;
 
+                HttpWebResponse response = null;
+
                 try
                 {
                     sw.Restart();
 
-                    //System.Net.WebClient wc = new System.Net.WebClient();
-                    //string result = wc.DownloadString(this.mTargetUri);
-                    //resultLength = result.Length;
+                    HttpWebRequest request = CreateRequest();
+                    response = request.GetResponse() as HttpWebResponse;
+                    string result = GetResponseAsString(response);
+                    resultLength = result.Length;
 
-                    HttpWebRequest request = HttpWebRequest.Create(this.mTargetUri) as HttpWebRequest;
-                    request.Timeout = Convert.ToInt32(nudTimeout.Value);
-                    HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                    resultLength = response.ContentLength;
-                    response.Close();
-
-                    msg = "耗时ms：" + sw.ElapsedMilliseconds.ToString("00000") + "\t内容长度：" + resultLength;
+                    msg = "耗时ms：" + sw.ElapsedMilliseconds.ToString("00000");
+                    msg += "\tStatus:" + "(" + (int)response.StatusCode + ")" + response.StatusCode;
+                    msg += "\tHeader Date:" + DateTime.Parse(response.Headers["Date"]).ToString("yyyyMMdd hhmmss");
+                    msg += "\t内容长度：" + resultLength;
 
                     System.Threading.Interlocked.Increment(ref this.mOkCount);
                 }
@@ -145,7 +152,18 @@ namespace GoOnLoading
                     Exception curEx = ex;
                     do
                     {
-                        msg += curEx.Message + "\t";
+                        if (curEx is WebException)
+                        {
+                            WebException webEx = curEx as WebException;
+                            msg += "Status:" + "(" + (int)webEx.Status + ")" + webEx.Status + "\t" + webEx.Message;
+                            if (webEx.Response != null && webEx.Response.Headers != null && webEx.Response.Headers["Date"] != null)
+                                msg += "\tHeader Data:" + DateTime.Parse(webEx.Response.Headers["Date"]).ToString("yyyyMMdd hhmmss");
+                            msg += "\tResponse:" + GetResponseAsString(webEx.Response as HttpWebResponse);
+                        }
+                        else
+                        {
+                            msg += curEx.Message + "\t";
+                        }
                         curEx = curEx.InnerException;
                     }
                     while (curEx != null);
@@ -156,6 +174,8 @@ namespace GoOnLoading
                 finally
                 {
                     sw.Stop();
+
+                    if (response != null) response.Close();
                 }
 
                 RefreshUI();
@@ -165,11 +185,66 @@ namespace GoOnLoading
             }
         }
 
+
+        private HttpWebRequest CreateRequest()
+        {
+            HttpWebRequest request = HttpWebRequest.Create(this.mTargetUri) as HttpWebRequest;
+            request.Method = this.mWebMethod;
+            request.Timeout = Convert.ToInt32(nudTimeout.Value);
+            request.KeepAlive = true;
+            request.UserAgent = "blzoom GoOnLoading";
+            request.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+            return request;
+        }
+
+
+        /// <summary>
+        /// 把响应流转换为文本。
+        /// </summary>
+        /// <param name="rsp">响应流对象</param>
+        /// <returns>响应文本</returns>
+        private string GetResponseAsString(HttpWebResponse rsp)
+        {
+            if (rsp == null) return "[无]";
+            return GetResponseAsString(rsp, System.Text.Encoding.GetEncoding(rsp.CharacterSet));
+        }
+
+
+        /// <summary>
+        /// 把响应流转换为文本。
+        /// </summary>
+        /// <param name="rsp">响应流对象</param>
+        /// <param name="encoding">编码方式</param>
+        /// <returns>响应文本</returns>
+        private string GetResponseAsString(HttpWebResponse rsp, Encoding encoding)
+        {
+            if (rsp == null) return "[无]";
+
+            System.IO.Stream stream = null;
+            StreamReader reader = null;
+
+            try
+            {
+                // 以字符流的方式读取HTTP响应
+                stream = rsp.GetResponseStream();
+                reader = new StreamReader(stream, encoding);
+                return reader.ReadToEnd();
+            }
+            finally
+            {
+                // 释放资源
+                if (reader != null) reader.Close();
+                if (stream != null) stream.Close();
+                if (rsp != null) rsp.Close();
+            }
+        }
+
+
         private void RefreshUI()
         {
             if (tbMsg.InvokeRequired)
             {
-                tbMsg.Invoke(new Action(RefreshUI));
+                tbMsg.BeginInvoke(new Action(RefreshUI));
             }
             else
             {
@@ -182,7 +257,8 @@ namespace GoOnLoading
         {
             if (tbMsg.InvokeRequired)
             {
-                tbMsg.Invoke(new Action<int, string, Color>(ShowMsg), threadId, msg, color);
+                //tbMsg.Invoke(new Action<int, string, Color>(ShowMsg), threadId, msg, color);
+                tbMsg.BeginInvoke(new Action<int, string, Color>(ShowMsg), threadId, msg, color);
             }
             else
             {
@@ -218,6 +294,11 @@ namespace GoOnLoading
                 string[] urlList = File.ReadAllLines(this.mUrlFileName);
                 cbUrl.Items.AddRange(urlList);
             }
+        }
+
+        private void cbMethod_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.mWebMethod = cbMethod.SelectedItem as string;
         }
     }
 }

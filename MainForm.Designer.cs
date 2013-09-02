@@ -43,6 +43,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.nudTimeout = new System.Windows.Forms.NumericUpDown();
             this.cbUrl = new System.Windows.Forms.ComboBox();
+            this.cbMethod = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudThreadCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVisitDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).BeginInit();
@@ -55,7 +56,7 @@
             // btnBeginLoad
             // 
             this.btnBeginLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBeginLoad.Location = new System.Drawing.Point(489, 11);
+            this.btnBeginLoad.Location = new System.Drawing.Point(473, 11);
             this.btnBeginLoad.Name = "btnBeginLoad";
             this.btnBeginLoad.Size = new System.Drawing.Size(73, 23);
             this.btnBeginLoad.TabIndex = 1;
@@ -66,7 +67,7 @@
             // btnStopLoad
             // 
             this.btnStopLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStopLoad.Location = new System.Drawing.Point(568, 11);
+            this.btnStopLoad.Location = new System.Drawing.Point(552, 11);
             this.btnStopLoad.Name = "btnStopLoad";
             this.btnStopLoad.Size = new System.Drawing.Size(73, 23);
             this.btnStopLoad.TabIndex = 1;
@@ -82,7 +83,7 @@
             this.tbMsg.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.tbMsg.Location = new System.Drawing.Point(5, 94);
             this.tbMsg.Name = "tbMsg";
-            this.tbMsg.Size = new System.Drawing.Size(812, 322);
+            this.tbMsg.Size = new System.Drawing.Size(796, 322);
             this.tbMsg.TabIndex = 2;
             this.tbMsg.Text = "";
             this.tbMsg.WordWrap = false;
@@ -91,7 +92,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(659, 12);
+            this.label1.Location = new System.Drawing.Point(643, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 12);
             this.label1.TabIndex = 3;
@@ -101,7 +102,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(659, 39);
+            this.label2.Location = new System.Drawing.Point(643, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 12);
             this.label2.TabIndex = 3;
@@ -111,7 +112,7 @@
             // 
             this.nudThreadCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.nudThreadCount.ImeMode = System.Windows.Forms.ImeMode.Disable;
-            this.nudThreadCount.Location = new System.Drawing.Point(748, 8);
+            this.nudThreadCount.Location = new System.Drawing.Point(732, 8);
             this.nudThreadCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -135,7 +136,7 @@
             0,
             0,
             0});
-            this.nudVisitDelay.Location = new System.Drawing.Point(748, 35);
+            this.nudVisitDelay.Location = new System.Drawing.Point(732, 35);
             this.nudVisitDelay.Maximum = new decimal(new int[] {
             60000,
             0,
@@ -150,7 +151,7 @@
             this.nudVisitDelay.Size = new System.Drawing.Size(57, 21);
             this.nudVisitDelay.TabIndex = 4;
             this.nudVisitDelay.Value = new decimal(new int[] {
-            500,
+            150,
             0,
             0,
             0});
@@ -181,7 +182,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(659, 64);
+            this.label3.Location = new System.Drawing.Point(643, 64);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(77, 12);
             this.label3.TabIndex = 3;
@@ -196,7 +197,7 @@
             0,
             0,
             0});
-            this.nudTimeout.Location = new System.Drawing.Point(748, 62);
+            this.nudTimeout.Location = new System.Drawing.Point(732, 62);
             this.nudTimeout.Maximum = new decimal(new int[] {
             60000,
             0,
@@ -225,17 +226,37 @@
             this.cbUrl.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbUrl.FormattingEnabled = true;
             this.cbUrl.IntegralHeight = false;
-            this.cbUrl.Location = new System.Drawing.Point(5, 9);
+            this.cbUrl.Location = new System.Drawing.Point(73, 9);
             this.cbUrl.Name = "cbUrl";
-            this.cbUrl.Size = new System.Drawing.Size(478, 24);
+            this.cbUrl.Size = new System.Drawing.Size(394, 24);
             this.cbUrl.TabIndex = 7;
             this.cbUrl.Leave += new System.EventHandler(this.cbUrl_Leave);
+            // 
+            // cbMethod
+            // 
+            this.cbMethod.DropDownHeight = 100;
+            this.cbMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMethod.DropDownWidth = 100;
+            this.cbMethod.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbMethod.FormattingEnabled = true;
+            this.cbMethod.IntegralHeight = false;
+            this.cbMethod.Items.AddRange(new object[] {
+            "GET",
+            "POST"});
+            this.cbMethod.Location = new System.Drawing.Point(5, 9);
+            this.cbMethod.MaxDropDownItems = 3;
+            this.cbMethod.Name = "cbMethod";
+            this.cbMethod.Size = new System.Drawing.Size(62, 24);
+            this.cbMethod.TabIndex = 7;
+            this.cbMethod.SelectedIndexChanged += new System.EventHandler(this.cbMethod_SelectedIndexChanged);
+            this.cbMethod.Leave += new System.EventHandler(this.cbUrl_Leave);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(822, 417);
+            this.ClientSize = new System.Drawing.Size(806, 417);
+            this.Controls.Add(this.cbMethod);
             this.Controls.Add(this.cbUrl);
             this.Controls.Add(this.lblFailCount);
             this.Controls.Add(this.lblOKCount);
@@ -277,6 +298,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown nudTimeout;
         private System.Windows.Forms.ComboBox cbUrl;
+        private System.Windows.Forms.ComboBox cbMethod;
     }
 }
 
